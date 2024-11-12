@@ -11,19 +11,18 @@ import {
 } from "react-bootstrap";
 import Rating from "../components/Rating";
 import products from "../products";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { listProductDetails } from "../actions/productActions";
 function ProductScreen() {
-  const [product, setProduct] = useState([]);
   const { id } = useParams();
 
-  useEffect(() => {
-    async function fetchProduct() {
-      const { data } = await axios.get(`/api/products/${id}`);
-      setProduct(data);
-    }
-    fetchProduct();
-  }, []);
+  const dispatch = useDispatch();
 
+  const productDetails = useSelector((state) => state.productDetails);
+  const { loading, error, product } = productDetails;
+  useEffect(() => {
+    dispatch(listProductDetails(id));
+  }, [dispatch, id]);
   return (
     <div>
       <Link to="/" className="btn btn-light my-3">
@@ -46,7 +45,7 @@ function ProductScreen() {
               />
             </ListGroup.Item>
             <ListGroup.Item> Price: ${product.price}</ListGroup.Item>
-            <ListGroup.Item>Description: ${product.description}</ListGroup.Item>
+            <ListGroup.Item>Description: {product.description}</ListGroup.Item>
           </ListGroup>
         </Col>
         <Col md={3}>
